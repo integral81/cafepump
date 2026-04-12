@@ -723,6 +723,15 @@ function showPumpInfo(pump) {
     sheet.classList.remove('hidden');
     sheet.classList.add('active');
     sheet.style.transform = '';
+
+    // [추가] 카카오맵 길찾기 버튼 업데이트
+    const btnNav = document.getElementById('btn-kakao-nav');
+    if (btnNav) {
+        btnNav.onclick = () => {
+            const url = `https://map.kakao.com/link/to/${encodeURIComponent(pump.name)},${pump.lat},${pump.lng}`;
+            window.open(url, '_blank');
+        };
+    }
 }
 
 // [수정] showCafeInfo에서 다시 요소를 보이게 설정해야 함
@@ -737,6 +746,16 @@ showCafeInfo = function(cafe) {
     document.querySelector('.wifi-info-section').style.display = 'flex';
     document.querySelector('.safety-meters').style.display = 'grid';
     document.querySelector('.seat-recommendation').style.display = 'block';
+    
+    // [추가] 카카오맵 길찾기 버튼 업데이트
+    const btnNav = document.getElementById('btn-kakao-nav');
+    if (btnNav) {
+        btnNav.onclick = () => {
+            const url = `https://map.kakao.com/link/to/${encodeURIComponent(cafe.name)},${cafe.lat},${cafe.lng}`;
+            window.open(url, '_blank');
+        };
+    }
+
     originalShowCafeInfo(cafe);
 };
 
@@ -836,6 +855,15 @@ function showChargerInfo(charger) {
     sheet.classList.remove('hidden');
     sheet.classList.add('active');
     sheet.style.transform = '';
+
+    // [추가] 카카오맵 길찾기 버튼 업데이트
+    const btnNav = document.getElementById('btn-kakao-nav');
+    if (btnNav) {
+        btnNav.onclick = () => {
+            const url = `https://map.kakao.com/link/to/${encodeURIComponent(charger.name)},${charger.lat},${charger.lng}`;
+            window.open(url, '_blank');
+        };
+    }
 }
 
 // --- CONTRIBUTION LOGIC ---

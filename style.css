@@ -970,3 +970,37 @@ p {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Kakao Map Navigation Button */
+.btn-kakao-map {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #FFEB00; /* Kakao Yellow */
+    color: #3C1E1E; /* Kakao Dark Brown */
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(255, 235, 0, 0.2);
+}
+
+.btn-kakao-map:hover {
+    background: #FADA00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 235, 0, 0.3);
+}
+
+.btn-kakao-map:active {
+    transform: translateY(0);
+}
+
+.btn-kakao-map i {
+    font-size: 16px;
+}
