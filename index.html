@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>카공 MBTI 맵 | 눈치 안 보는 나만의 명당 찾기</title>
+    <meta name="description" content="카공족을 위한 MBTI별 맞춤 좌석 추천 및 눈치 지수 확인 서비스. 오늘 당신의 성향에 딱 맞는 카페 명당을 찾아보세요.">
+    
+    <!-- PWA-ready: iPhone app feel -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Onboarding Screen (MBTI Selection) -->
+        <section id="onboarding" class="screen">
+            <div class="glass-panel">
+                <header class="onboarding-header">
+                    <span class="badge">카공족 라이프스타일</span>
+                    <h1>오늘 어떤 무드로<br>카공하고 싶나요?</h1>
+                    <p>당신의 카공 MBTI를 선택하면<br>그에 딱 맞는 명당을 큐레이션해드려요.</p>
+                </header>
+
+                <div class="mbti-grid-full">
+                    <!-- JS will populate 16 MBTI types here -->
+                </div>
+
+                <div class="onboarding-footer">
+                    <button id="btn-start" class="btn-primary" disabled>지도에서 명당 확인하기</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Map Screen -->
+        <section id="map-screen" class="screen hidden">
+            <div id="map"></div>
+            
+            <!-- Top Search/Filter Bar -->
+            <div class="top-nav">
+                <div class="search-box glass">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="동네나 카페 이름 검색...">
+                    <div class="mbti-selector-group">
+                        <span id="header-mbti-badge" class="mbti-badge-mini">INTJ</span>
+                        <button id="btn-re-mbti" class="btn-change-mbti">재선택</button>
+                    </div>
+                </div>
+                <div class="filter-pills">
+                    <button class="pill active">추천순</button>
+                    <button class="pill">눈치 Safety</button>
+                    <button class="pill">와이파이 빵빵</button>
+                    <button id="toggle-pumps" class="pill secondary"><i class="fa-solid fa-bicycle"></i> 자전거 공기</button>
+                    <button id="toggle-chargers" class="pill secondary purple"><i class="fa-solid fa-bolt"></i> 전기 충전</button>
+                </div>
+
+
+            </div>
+
+            <!-- Floating Action Buttons -->
+            <div class="fab-group">
+                <button class="fab-btn" id="btn-my-location" title="내 위치"><i class="fa-solid fa-location-crosshairs"></i></button>
+                <div class="fab-menu-container">
+                    <div id="fab-submenu" class="fab-submenu hidden">
+                        <button class="submenu-item" data-type="cafe"><i class="fa-solid fa-mug-hot"></i><span>카페</span></button>
+                        <button class="submenu-item" data-type="bicycle_pump"><i class="fa-solid fa-bicycle"></i><span>공기주입기</span></button>
+                        <button class="submenu-item" data-type="electric_charger"><i class="fa-solid fa-bolt"></i><span>전기충전소</span></button>
+                    </div>
+                    <button id="btn-report-main" class="fab-btn primary" title="명당 제보"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+
+            <!-- Location Picker Confirmation Bar -->
+            <div id="picker-bar" class="picker-confirm-bar hidden">
+                <div class="picker-info">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span id="picker-address">지도를 클릭하여 위치를 정해주세요</span>
+                </div>
+                <button id="btn-picker-done" class="btn-picker-confirm">위치 확정</button>
+            </div>
+
+            <!-- Report Modal (User Contribution) -->
+            <div id="report-modal" class="modal-overlay hidden">
+                <div class="glass-modal">
+                    <div class="modal-header">
+                        <h3>명당 제보하기</h3>
+                        <button id="btn-close-report" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <label>닉네임 (익명)</label>
+                            <input type="text" id="report-nickname" placeholder="닉네임을 입력해주세요">
+                        </div>
+                        <div class="input-group">
+                            <label>장소 명칭</label>
+                            <input type="text" id="report-name" placeholder="예: 목1동 주민센터 공기주입기">
+                        </div>
+                        <div class="input-group">
+                            <label>위치 정보</label>
+                            <div class="location-input-row">
+                                <input type="text" id="report-address" placeholder="지도에서 선택해주세요" readonly>
+                                <button id="btn-open-picker" class="btn-secondary-mini">지도에서 선택</button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>현장 사진</label>
+                            <div class="file-upload-area" id="drop-zone">
+                                <input type="file" id="report-file" accept="image/*" hidden>
+                                <div id="preview-container" class="preview-box">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>사진을 추가해주세요</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btn-submit-report" class="btn-primary">제보 완료하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <nav class="bottom-nav">
+                <button class="nav-item">
+                    <i class="fa-solid fa-house"></i>
+                    <span>홈</span>
+                </button>
+                <button class="nav-item active">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>지도</span>
+                </button>
+                <button class="nav-item">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <span>저장</span>
+                </button>
+                <button class="nav-item">
+                    <i class="fa-solid fa-user"></i>
+                    <span>MY</span>
+                </button>
+            </nav>
+
+            <!-- Bottom Sheet for Cafe Details -->
+            <div id="cafe-detail-sheet" class="bottom-sheet hidden">
+                <div class="handle"></div>
+                <div class="sheet-content">
+                    <div class="cafe-header">
+                        <div class="title-area">
+                            <h2 id="sheet-cafe-name">스타벅스 신촌점</h2>
+                            <div class="subtitle-row">
+                                <span class="category" id="sheet-cafe-addr">서강대 인근</span>
+                                <span class="dist-tag" id="sheet-cafe-dist">내 위치에서 150m</span>
+                            </div>
+                        </div>
+                        <div class="mbti-match">
+                            <span class="match-score">98%</span>
+                            <small id="sheet-mbti-type">너랑 찰떡궁합!</small>
+                        </div>
+                    </div>
+
+                    <!-- 킬링 멘트 ( Killing Comment ) 영역 -->
+                    <div id="killing-comment-container" class="killing-box">
+                        <i class="fa-solid fa-quote-left"></i>
+                        <p id="killing-comment">당신 성향에 딱 맞는 명당을 분석 중입니다...</p>
+                        <i class="fa-solid fa-quote-right"></i>
+                    </div>
+
+                    <!-- 이미지 갤러리 영역 ( Carousel ) -->
+                    <div class="gallery-container">
+                        <div id="cafe-gallery" class="gallery-scroll">
+                            <!-- JS에서 이미지가 동적으로 추가됨 -->
+                        </div>
+                    </div>
+
+                    <!-- 와이파이 섹션 추가 -->
+                    <div class="wifi-info-section">
+                        <div class="wifi-row">
+                            <i class="fa-solid fa-wifi"></i>
+                            <span id="sheet-wifi-ssid">와이파이 정보 없음</span>
+                        </div>
+                        <div class="wifi-row">
+                            <i class="fa-solid fa-lock"></i>
+                            <span id="sheet-wifi-pw">영수증 하단 기재</span>
+                        </div>
+                    </div>
+                    
+                    <div class="safety-meters">
+                        <div class="meter-item">
+                            <label>눈치 지수</label>
+                            <div class="track"><div class="bar safety" style="width: 80%;"></div></div>
+                            <span>안전</span>
+                        </div>
+                        <div class="meter-item">
+                            <label>콘센트 밀도</label>
+                            <div class="track"><div class="bar battery" style="width: 90%;"></div></div>
+                            <span>충천 왕</span>
+                        </div>
+                    </div>
+
+                    <div class="seat-recommendation">
+                        <h3>MBTI 맞춤 명당 좌석</h3>
+                        <div class="seat-card">
+                            <div class="seat-info">
+                                <strong>안쪽 구석 1인석</strong>
+                                <p>가장 인기 많은 사각지대 좌석입니다.</p>
+                            </div>
+                            <span class="badge">현황: 비어있음</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Kakao Map SDK -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f2ac53a34a1645a26f54d08c7996779f&libraries=services"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
