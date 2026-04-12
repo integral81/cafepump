@@ -271,6 +271,11 @@ function initMap() {
 
     state.map = new kakao.maps.Map(container, options);
 
+    // [추가] 지도 렌더링 보정 (화면 전환 시 흰 배경 방지)
+    setTimeout(() => {
+        state.map.relayout();
+    }, 300);
+
     // [추가] 지도 빈 공간 클릭 시 바텀 시트 닫기 및 Picker 위치 지정
     kakao.maps.event.addListener(state.map, 'click', (e) => {
         if (state.isPickingLocation) {
@@ -613,30 +618,41 @@ function setupSheetGestures() {
 async function fetchPumps() {
     if (!supabase) return;
 
-    // 공공 데이터 가져오기
-    const { data: pumps, error } = await supabase
-        .from('bicycle_pumps')
-        .select('*');
+    try {
+        showToast('자전기 정보를 불러오는 중...');
+        let allPumps = [];
+        let from = 0;
+        let step = 1000;
 
-    // 사용자 제보 데이터 가져오기
-    const { data: userReports } = await supabase
-        .from('user_reports')
-        .select('*')
-        .eq('category', 'bicycle_pump');
+        while (true) {
+            const { data, error } = await supabase
+                .from('bicycle_pumps')
+                .select('*')
+                .range(from, from + step - 1);
+            
+            if (error) throw error;
+            if (!data || data.length === 0) break;
+            allPumps = allPumps.concat(data);
+            if (data.length < step) break;
+            from += step;
+        }
 
-    if (error) {
+        const { data: userReports } = await supabase
+            .from('user_reports')
+            .select('*')
+            .eq('category', 'bicycle_pump');
+
+        const combinedPumps = [
+            ...allPumps.map(p => ({ ...p, isUserReport: false })),
+            ...(userReports || []).map(p => ({ ...p, isUserReport: true, city: '사용자 제보' }))
+        ];
+
+        state.pumps = combinedPumps;
+        renderPumpMarkers();
+    } catch (error) {
         console.error('Error fetching pumps:', error);
-        return;
+        showToast('데이터를 불러오지 못했습니다.');
     }
-
-    // 데이터 통합 (isUserReport 플래그 추가)
-    const combinedPumps = [
-        ...pumps.map(p => ({ ...p, isUserReport: false })),
-        ...(userReports || []).map(p => ({ ...p, isUserReport: true, city: '사용자 제보' }))
-    ];
-
-    state.pumps = combinedPumps;
-    renderPumpMarkers();
 }
 
 function renderPumpMarkers() {
@@ -728,27 +744,39 @@ showCafeInfo = function(cafe) {
 async function fetchChargers() {
     if (!supabase) return;
 
-    const { data: chargers, error } = await supabase
-        .from('electric_chargers')
-        .select('*');
+    try {
+        let allChargers = [];
+        let from = 0;
+        let step = 1000;
 
-    const { data: userReports } = await supabase
-        .from('user_reports')
-        .select('*')
-        .eq('category', 'electric_charger');
+        while (true) {
+            const { data, error } = await supabase
+                .from('electric_chargers')
+                .select('*')
+                .range(from, from + step - 1);
 
-    if (error) {
+            if (error) throw error;
+            if (!data || data.length === 0) break;
+            allChargers = allChargers.concat(data);
+            if (data.length < step) break;
+            from += step;
+        }
+
+        const { data: userReports } = await supabase
+            .from('user_reports')
+            .select('*')
+            .eq('category', 'electric_charger');
+
+        const combinedChargers = [
+            ...allChargers.map(c => ({ ...c, isUserReport: false })),
+            ...(userReports || []).map(c => ({ ...c, isUserReport: true, description: '사용자 제보' }))
+        ];
+
+        state.chargers = combinedChargers;
+        renderChargerMarkers();
+    } catch (error) {
         console.error('Error fetching chargers:', error);
-        return;
     }
-
-    const combinedChargers = [
-        ...chargers.map(c => ({ ...c, isUserReport: false })),
-        ...(userReports || []).map(c => ({ ...c, isUserReport: true, description: '사용자 제보' }))
-    ];
-
-    state.chargers = combinedChargers;
-    renderChargerMarkers();
 }
 
 function renderChargerMarkers() {
