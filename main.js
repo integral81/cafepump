@@ -731,16 +731,8 @@ function showPumpInfo(pump) {
     sheet.style.transform = '';
 
     // [추가] 카카오맵 길찾기 버튼 업데이트 (내 위치 정보 반영)
-    const btnNav = document.getElementById('btn-kakao-nav');
-    if (btnNav) {
-        btnNav.onclick = () => {
             let url;
-            if (state.userLat && state.userLng) {
-                // 내 위치를 출발지로 설정
-                url = `https://map.kakao.com/link/route/${encodeURIComponent('내 위치')},${state.userLat},${state.userLng},${encodeURIComponent(pump.name)},${pump.lat},${pump.lng}`;
-            } else {
-                url = `https://map.kakao.com/link/to/${encodeURIComponent(pump.name)},${pump.lat},${pump.lng}`;
-            }
+            url = `https://map.kakao.com/link/to/${encodeURIComponent(pump.name)},${pump.lat},${pump.lng}`;
             window.open(url, '_blank');
         };
     }
@@ -759,17 +751,11 @@ showCafeInfo = function(cafe) {
     document.querySelector('.safety-meters').style.display = 'grid';
     document.querySelector('.seat-recommendation').style.display = 'block';
     
-    // [추가] 카카오맵 길찾기 버튼 업데이트 (내 위치 정보가 있으면 반영)
+    // [추가] 카카오맵 길찾기 버튼 업데이트
     const btnNav = document.getElementById('btn-kakao-nav');
     if (btnNav) {
         btnNav.onclick = () => {
-            let url;
-            if (state.userLat && state.userLng) {
-                // 내 위치를 출발지로 설정
-                url = `https://map.kakao.com/link/route/${encodeURIComponent('내 위치')},${state.userLat},${state.userLng},${encodeURIComponent(cafe.name)},${cafe.lat},${cafe.lng}`;
-            } else {
-                url = `https://map.kakao.com/link/to/${encodeURIComponent(cafe.name)},${cafe.lat},${cafe.lng}`;
-            }
+            const url = `https://map.kakao.com/link/to/${encodeURIComponent(cafe.name)},${cafe.lat},${cafe.lng}`;
             window.open(url, '_blank');
         };
     }
@@ -875,16 +861,8 @@ function showChargerInfo(charger) {
     sheet.style.transform = '';
 
     // [추가] 카카오맵 길찾기 버튼 업데이트 (내 위치 정보 반영)
-    const btnNav = document.getElementById('btn-kakao-nav');
-    if (btnNav) {
-        btnNav.onclick = () => {
             let url;
-            if (state.userLat && state.userLng) {
-                // 내 위치를 출발지로 설정
-                url = `https://map.kakao.com/link/route/${encodeURIComponent('내 위치')},${state.userLat},${state.userLng},${encodeURIComponent(charger.name)},${charger.lat},${charger.lng}`;
-            } else {
-                url = `https://map.kakao.com/link/to/${encodeURIComponent(charger.name)},${charger.lat},${charger.lng}`;
-            }
+            url = `https://map.kakao.com/link/to/${encodeURIComponent(charger.name)},${charger.lat},${charger.lng}`;
             window.open(url, '_blank');
         };
     }
