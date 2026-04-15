@@ -416,8 +416,8 @@ function calculateMatchScore(cafe, userMbti) {
     const avgPrivacy = cafe.seats.reduce((acc, s) => acc + (s.privacy_score || 0), 0) / (cafe.seats.length || 1);
     if (avgPrivacy >= userPref.min_privacy) score += 15;
 
-    // 3. 소음도 가중치
-    if (cafe.noise_level === '조용함') score += 5;
+    // 3. 소음도 가중치 (noise_level: 1=도서관형, 5=시장통)
+    if (cafe.noise_level <= 2) score += 5;
 
     return Math.min(score, 100);
 }
@@ -500,9 +500,8 @@ function showCafeInfo(cafe) {
     const safetyBar = document.querySelector('.bar.safety');
     const batteryBar = document.querySelector('.bar.battery');
     
-    // 소음도에 따른 게이지 (조용함=100%, 보통=60%, 시끄러움=30%)
-    const noiseMap = { '조용함': 100, '보통': 60, '시끄러움': 30 };
-    const safetyPercent = noiseMap[cafe.noise_level] || 50;
+    // 정숙도 게이지 (noise_level: 1=도서관형(100%) ~ 5=시장통(20%))
+    const safetyPercent = Math.max(20, 100 - (cafe.noise_level - 1) * 20);
     
     // 와이파이 정보 업데이트
     document.getElementById('sheet-wifi-ssid').textContent = cafe.wifi_ssid || '와이파이 정보 준비 중';
@@ -523,8 +522,8 @@ function showCafeInfo(cafe) {
     document.querySelector('.match-score').textContent = `${cafe.match}%`;
     document.getElementById('sheet-mbti-type').textContent = state.userMbti;
 
-    // 킬링 멘트 업데이트
-    const killingComment = state.killingComments[state.userMbti] || '당신의 성향에 딱 맞는 명당입니다.';
+    // 킬링 멘트 업데이트 (DB 카페별 멘트 우선, 없으면 MBTI 기반 폴백)
+    const killingComment = cafe.killing_comment || state.killingComments[state.userMbti] || '당신의 성향에 딱 맞는 명당입니다.';
     document.getElementById('killing-comment').textContent = killingComment;
 
     // 이미지 갤러리 업데이트
@@ -731,8 +730,10 @@ function showPumpInfo(pump) {
     sheet.style.transform = '';
 
     // [추가] 카카오맵 길찾기 버튼 업데이트 (내 위치 정보 반영)
-            let url;
-            url = `https://map.kakao.com/link/to/${encodeURIComponent(pump.name)},${pump.lat},${pump.lng}`;
+    const btnNav = document.getElementById('btn-kakao-nav');
+    if (btnNav) {
+        btnNav.onclick = () => {
+            const url = `https://map.kakao.com/link/to/${encodeURIComponent(pump.name)},${pump.lat},${pump.lng}`;
             window.open(url, '_blank');
         };
     }
@@ -861,8 +862,10 @@ function showChargerInfo(charger) {
     sheet.style.transform = '';
 
     // [추가] 카카오맵 길찾기 버튼 업데이트 (내 위치 정보 반영)
-            let url;
-            url = `https://map.kakao.com/link/to/${encodeURIComponent(charger.name)},${charger.lat},${charger.lng}`;
+    const btnNav = document.getElementById('btn-kakao-nav');
+    if (btnNav) {
+        btnNav.onclick = () => {
+            const url = `https://map.kakao.com/link/to/${encodeURIComponent(charger.name)},${charger.lat},${charger.lng}`;
             window.open(url, '_blank');
         };
     }
