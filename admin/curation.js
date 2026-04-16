@@ -94,8 +94,7 @@ cameraInput.onchange = async (e) => {
     cameraBtn.disabled = true;
     cameraBtn.textContent = '업로드 중...';
 
-    const slug = selectedCafe.name.replace(/[^a-zA-Z0-9가-힣]/g, '_');
-    const fileName = `${slug}_${Date.now()}.jpg`;
+    const fileName = `cafe_${selectedCafe.id.substring(0,8)}_${Date.now()}.jpg`;
     const filePath = `photos/${fileName}`;
 
     try {
