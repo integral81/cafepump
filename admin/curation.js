@@ -38,11 +38,10 @@ async function init() {
         return;
     }
 
-    // 강남/서초/덕소/삼패 지역 카페만 관리자 목록에 노출 (사용자 요청)
+    // 덕소 관련 지역 카페만 관리자 목록에 노출 (사용자 요청: 덕소만 노출)
     cafes = data.filter(cafe => 
-        cafe.address?.includes('강남') || cafe.address?.includes('서초') || 
-        cafe.address?.includes('역삼') || cafe.address?.includes('덕소') ||
-        cafe.address?.includes('와부') || cafe.address?.includes('삼패')
+        cafe.address?.includes('덕소') || cafe.address?.includes('와부') || 
+        cafe.address?.includes('삼패')
     );
     renderCafeList();
 }
