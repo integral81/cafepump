@@ -16,7 +16,6 @@ const DEOKSO_CAFES = [
     { name: 'LOFT317', address: '경기 남양주시 와부읍 덕소로 317', lat: 37.5872, lng: 127.2185, outlet_density: 3, noise_level: 2, eyesight_pressure: 2, killing_comment: '세련된 인테리어와 여유로운 공간. 창의적인 고민에 제격.' },
     { name: '버디 (Birdie)', address: '경기 남양주시 와부읍 덕소로 282', lat: 37.5862, lng: 127.2182, outlet_density: 3, noise_level: 2, eyesight_pressure: 2, killing_comment: '한적한 위치에서 조용히 책 보거나 노트북 하기 좋습니다.' },
     { name: '단아커피', address: '경기 남양주시 와부읍 덕소로116번길 20', lat: 37.5841, lng: 127.2095, outlet_density: 3, noise_level: 2, eyesight_pressure: 2, killing_comment: '동네 아지트 같은 편안함. 아늑한 분위기에서 작업 가능.' },
-    { name: '카페 아지트', address: '경기 남양주시 와부읍 덕소로 200', lat: 37.5845, lng: 127.2125, outlet_density: 3, noise_level: 3, eyesight_pressure: 2, killing_comment: '편안한 좌석과 적당한 백색소음이 있는 곳.' },
     { name: '컴포즈커피 남양주덕소점', address: '경기 남양주시 와부읍 덕소로 212', lat: 37.5848, lng: 127.2135, outlet_density: 2, noise_level: 4, eyesight_pressure: 3, killing_comment: '가벼운 마음으로 들러 공부하기 좋은 가성비 카페.' }
 ];
 
