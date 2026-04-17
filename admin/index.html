@@ -113,8 +113,21 @@
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
+        .photo-card {
+            position: relative;
+            cursor: move; /* 드래그 가능함을 커서로 표시 */
+            transition: transform 0.2s;
+        }
+        .photo-card:active {
+            transform: scale(0.95);
+        }
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #e2e8f0;
+        }
         /* ... 기존 스타일 유지 */
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
     <aside>

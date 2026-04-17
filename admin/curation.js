@@ -44,6 +44,43 @@ async function init() {
         cafe.address?.includes('삼패')
     );
     renderCafeList();
+    initSortable(); // Sortable 초기화 추가
+}
+
+function initSortable() {
+    if (!photoGridEl) return;
+    
+    new Sortable(photoGridEl, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        // 드래그가 끝났을 때의 동작
+        onEnd: async () => {
+            if (!selectedCafe) return;
+            
+            // DOM 엔진에서 현재 자식 요소들의 data-url 값을 순서대로 수집
+            const children = Array.from(photoGridEl.children);
+            const newUrls = children
+                .map(child => child.getAttribute('data-url'))
+                .filter(url => url); // 검색 결과가 섞여있을 수 있으므로 URL이 있는 것만 필터링
+
+            // 순서가 실제로 바뀌었는지 확인 후 DB 업데이트
+            if (JSON.stringify(newUrls) !== JSON.stringify(selectedCafe.image_urls)) {
+                try {
+                    console.log('🔄 순서 변경 중...');
+                    await updateCafeImages(selectedCafe.id, newUrls);
+                    selectedCafe.image_urls = newUrls;
+                    
+                    // 삭제 버튼의 인덱스 정합성을 위해 재렌더링
+                    loadCurrentPhotos();
+                    renderCafeList(); // 배지 숫자 업데이트
+                    console.log('✅ 순서 변경 저장 완료');
+                } catch (err) {
+                    alert('순서 저장 실패: ' + err.message);
+                    loadCurrentPhotos(); // 실패 시 원래 순서로 복구
+                }
+            }
+        }
+    });
 }
 
 function renderCafeList() {
@@ -72,7 +109,7 @@ function loadCurrentPhotos() {
     deleteAllBtn.style.display = selectedCafe.image_urls?.length > 0 ? 'inline-block' : 'none';
     
     photoGridEl.innerHTML = (selectedCafe.image_urls || []).map((url, i) => `
-        <div class="photo-card" style="position: relative;">
+        <div class="photo-card" data-url="${url}">
             <img src="${url}">
             <div class="badge">현재 등록됨</div>
             <button class="delete-btn" onclick="removePhoto(${i})" 
