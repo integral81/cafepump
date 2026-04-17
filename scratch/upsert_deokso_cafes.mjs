@@ -10,7 +10,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const DEOKSO_CAFES = [
     { name: '커피에리어 (COFFEE AREA)', address: '경기 남양주시 와부읍 덕소로 96', lat: 37.5828, lng: 127.2085, outlet_density: 4, noise_level: 2, eyesight_pressure: 1, killing_comment: '조용하고 깔끔한 분위기. 집중해서 작업하기 최고입니다.' },
     { name: '투썸플레이스 남양주덕소점', address: '경기 남양주시 와부읍 월문천로 115', lat: 37.5872, lng: 127.2052, outlet_density: 4, noise_level: 3, eyesight_pressure: 1, killing_comment: '넓은 매장과 다양한 테이블. 장시간 작업 시 추천.' },
-    { name: '이디야커피 덕소역점', address: '경기 남양주시 와부읍 덕소로 80', lat: 37.5822, lng: 127.2075, outlet_density: 3, noise_level: 3, eyesight_pressure: 2, killing_comment: '덕소역 바로 앞. 가성비 좋게 잠깐 작업하기 좋습니다.' },
     { name: '스타벅스 남양주삼패점', address: '경기 남양주시 경강로 384', lat: 37.5805, lng: 127.2005, outlet_density: 4, noise_level: 3, eyesight_pressure: 1, killing_comment: '한강 전망을 즐기며 카공하기 최고의 장소. 남양주삼패점입니다.' },
     { name: '메가MGC커피 덕소점', address: '경기 남양주시 와부읍 덕소로 97', lat: 37.5825, lng: 127.2088, outlet_density: 2, noise_level: 4, eyesight_pressure: 3, killing_comment: '가성비 위주. 짧고 굵게 집중할 때 추천.' },
     { name: 'LOFT317', address: '경기 남양주시 와부읍 덕소로 317', lat: 37.5872, lng: 127.2185, outlet_density: 3, noise_level: 2, eyesight_pressure: 2, killing_comment: '세련된 인테리어와 여유로운 공간. 창의적인 고민에 제격.' },
